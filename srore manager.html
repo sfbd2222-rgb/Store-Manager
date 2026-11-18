@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOOD DREAM REAL ESTATE - Smart Stock & Inventory System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col pb-20 md:pb-0">
+
+    <!-- Header -->
+    <header class="bg-slate-800 border-b border-slate-700 px-4 md:px-6 py-3.5 flex justify-between items-center shadow-lg sticky top-0 z-40">
+        <div class="flex items-center space-x-3">
+            <div class="bg-emerald-500 p-2 rounded-xl text-slate-900 font-bold text-lg shadow-md">
+                <i class="fa-solid fa-boxes-stacked"></i>
+            </div>
+            <div>
+                <h1 class="text-sm md:text-lg font-bold tracking-wide text-white leading-tight">GOOD DREAM REAL ESTATE</h1>
+                <p class="text-[10px] md:text-xs text-slate-400">100% Cloud Live Stock System</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2">
+            <span class="px-3 py-1.5 bg-emerald-500/15 text-emerald-400 text-xs font-semibold rounded-full border border-emerald-500/30 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Sheet Connected
+            </span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="flex-1 flex flex-col md:flex-row">
+        <!-- Sidebar / Bottom Mobile Nav -->
+        <aside class="w-full md:w-64 bg-slate-800/95 border-r border-slate-700 p-2 md:p-4 fixed md:relative bottom-0 left-0 z-40 flex md:flex-col justify-around md:justify-start shadow-xl md:shadow-none border-t md:border-t-0 border-slate-700 md:space-y-1.5">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex flex-col md:flex-row items-center md:space-x-3 px-3 md:px-4 py-2 md:py-3 rounded-xl font-medium transition text-emerald-400 bg-slate-700/60 text-xs md:text-sm">
+                <i class="fa-solid fa-grip text-base md:w-5"></i>
+                <span class="text-[10px] md:text-sm mt-1 md:mt-0">Live Stock</span>
+            </button>
+            <button onclick="switchTab('stockout')" id="nav-stockout" class="flex flex-col md:flex-row items-center md:space-x-3 px-3 md:px-4 py-2 md:py-3 rounded-xl font-medium transition text-slate-400 hover:bg-slate-700/40 hover:text-white text-xs md:text-sm">
+                <i class="fa-solid fa-arrow-up-right-from-square text-base md:w-5"></i>
+                <span class="text-[10px] md:text-sm mt-1 md:mt-0">Stock Out</span>
+            </button>
+            <button onclick="switchTab('history')" id="nav-history" class="flex flex-col md:flex-row items-center md:space-x-3 px-3 md:px-4 py-2 md:py-3 rounded-xl font-medium transition text-slate-400 hover:bg-slate-700/40 hover:text-white text-xs md:text-sm">
+                <i class="fa-solid fa-clock-rotate-left text-base md:w-5"></i>
+                <span class="text-[10px] md:text-sm mt-1 md:mt-0">Logs & History</span>
+            </button>
+            <button onclick="switchTab('manager')" id="nav-manager" class="flex flex-col md:flex-row items-center md:space-x-3 px-3 md:px-4 py-2 md:py-3 rounded-xl font-medium transition text-slate-400 hover:bg-slate-700/40 hover:text-white text-xs md:text-sm">
+                <i class="fa-solid fa-user-shield text-base md:w-5"></i>
+                <span class="text-[10px] md:text-sm mt-1 md:mt-0">Manager</span>
+            </button>
+        </aside>
+
+        <!-- Content Area -->
+        <main class="flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full overflow-y-auto">
+            
+            <!-- Loading Overlay -->
+            <div id="loadingBar" class="hidden mb-4 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-4 py-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <span id="loadingText">Google Sheet থেকে লাইভ ডেটা লোড হচ্ছে...</span>
+            </div>
+
+            <!-- TAB 1: DASHBOARD -->
+            <div id="tab-dashboard" class="space-y-5">
+                <!-- KPI Cards -->
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    <div class="bg-slate-800 border border-slate-700 p-3.5 rounded-2xl">
+                        <p class="text-[11px] text-slate-400">Total Products</p>
+                        <h3 id="statTotalItems" class="text-xl md:text-2xl font-bold text-white mt-0.5">0</h3>
+                    </div>
+                    <div class="bg-slate-800 border border-slate-700 p-3.5 rounded-2xl">
+                        <p class="text-[11px] text-slate-400">Total Stock In</p>
+                        <h3 id="statTotalStock" class="text-xl md:text-2xl font-bold text-emerald-400 mt-0.5">0</h3>
+                    </div>
+                    <div class="bg-slate-800 border border-slate-700 p-3.5 rounded-2xl">
+                        <p class="text-[11px] text-slate-400">Approved Out</p>
+                        <h3 id="statTotalStockOut" class="text-xl md:text-2xl font-bold text-rose-400 mt-0.5">0</h3>
+                    </div>
+                    <div class="bg-slate-800 border border-slate-700 p-3.5 rounded-2xl">
+                        <p class="text-[11px] text-slate-400">Current Stock</p>
+                        <h3 id="statCurrentStock" class="text-xl md:text-2xl font-bold text-blue-400 mt-0.5">0</h3>
+                    </div>
+                    <div class="bg-slate-800 border border-slate-700 p-3.5 rounded-2xl col-span-2 md:col-span-1">
+                        <p class="text-[11px] text-slate-400">Low Stock (&le;5)</p>
+                        <h3 id="statLowStock" class="text-xl md:text-2xl font-bold text-amber-400 mt-0.5">0</h3>
+                    </div>
+                </div>
+
+                <!-- Search, Filter & Refresh -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 md:p-5 shadow-xl space-y-4">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-3">
+                        <div class="flex flex-col sm:flex-row items-center gap-2.5 w-full">
+                            <div class="relative w-full sm:w-80">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                                <input type="text" id="searchInput" oninput="renderDashboard()" placeholder="নাম বা ID দিয়ে খুঁজুন (GD101)..." class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <select id="categoryFilter" onchange="renderDashboard()" class="w-full sm:w-auto bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                                <option value="ALL">All Categories</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2 w-full md:w-auto justify-between md:justify-end">
+                            <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-700">
+                                <button onclick="setViewMode('grid')" id="viewModeGridBtn" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500 text-slate-900"><i class="fa-solid fa-grip"></i> Cards</button>
+                                <button onclick="setViewMode('table')" id="viewModeTableBtn" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-white"><i class="fa-solid fa-table"></i> Table</button>
+                            </div>
+                            <button onclick="fetchAllDataFromSheet()" class="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-900 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow">
+                                <i class="fa-solid fa-rotate"></i> Sync Sheet
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Photo Cards Grid View -->
+                    <div id="productGridView" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3.5"></div>
+
+                    <!-- Table View -->
+                    <div id="productTableView" class="hidden overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase">
+                                    <th class="py-3 px-3">Photo</th>
+                                    <th class="py-3 px-3">ID</th>
+                                    <th class="py-3 px-3">Product Name</th>
+                                    <th class="py-3 px-3">Category</th>
+                                    <th class="py-3 px-3 text-center">In</th>
+                                    <th class="py-3 px-3 text-center">Out</th>
+                                    <th class="py-3 px-3 text-center">Current</th>
+                                    <th class="py-3 px-3 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productTableBody" class="divide-y divide-slate-700/50 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: STAFF STOCK OUT -->
+            <div id="tab-stockout" class="hidden space-y-6">
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 md:p-6 shadow-xl max-w-xl mx-auto">
+                    <h3 class="text-lg font-bold text-white mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-emerald-400"></i> Staff Stock Out Form
+                    </h3>
+                    <p class="text-xs text-slate-400 mb-5">পাসওয়ার্ড ছাড়াই স্টক আউট সাবমিট করুন। নতুন ও পুরানো পার্টের ছবি বাধ্যতামূলক।</p>
+                    
+                    <form id="stockOutForm" onsubmit="handleStockOutSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Staff / Technician Name *</label>
+                            <select id="soStaffName" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+                                <option value="">-- Select Staff --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Select Product *</label>
+                            <select id="soProductSelect" onchange="updateStockOutPreview()" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+                                <option value="">-- Choose Product --</option>
+                            </select>
+                        </div>
+                        <div id="soProductPreviewBox" class="hidden p-3 bg-slate-900 rounded-xl border border-slate-700 flex items-center gap-3">
+                            <img id="soPreviewImg" src="" class="w-14 h-14 object-cover rounded-lg border border-slate-700" alt="Product">
+                            <div>
+                                <p id="soPreviewName" class="text-sm font-bold text-white"></p>
+                                <p id="soPreviewStock" class="text-xs text-emerald-400 font-semibold"></p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Quantity *</label>
+                                <input type="number" id="soQty" min="1" value="1" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Villa / Building *</label>
+                                <select id="soVillaNo" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+                                    <option value="">-- Select Villa --</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Room / Flat / Area *</label>
+                            <input type="text" id="soRoom" placeholder="e.g. Room 04, Kitchen, Roof" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Work Note</label>
+                            <input type="text" id="soNote" placeholder="e.g. Replaced damaged mixer" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+                        </div>
+
+                        <!-- Dual Photo Proof -->
+                        <div class="border-t border-slate-700 pt-3">
+                            <label class="block text-xs font-bold text-amber-400 uppercase mb-2">Dual Photo Proof (Mandatory)</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="border border-dashed border-slate-600 p-3 rounded-xl text-center bg-slate-900/50">
+                                    <p class="text-[11px] text-slate-300 font-semibold mb-1.5">1. New Item Photo</p>
+                                    <input type="file" id="soNewPhotoFile" accept="image/*" capture="environment" onchange="handleImageCompress(event, 'soNew')" class="hidden">
+                                    <button type="button" onclick="document.getElementById('soNewPhotoFile').click()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium w-full"><i class="fa-solid fa-camera"></i> Capture / Upload</button>
+                                    <img id="soNewPhotoPreview" class="w-full h-20 object-cover rounded-lg mt-2 hidden border border-slate-700" alt="New">
+                                </div>
+                                <div class="border border-dashed border-slate-600 p-3 rounded-xl text-center bg-slate-900/50">
+                                    <p class="text-[11px] text-slate-300 font-semibold mb-1.5">2. Old Part Photo</p>
+                                    <input type="file" id="soOldPhotoFile" accept="image/*" capture="environment" onchange="handleImageCompress(event, 'soOld')" class="hidden">
+                                    <button type="button" onclick="document.getElementById('soOldPhotoFile').click()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium w-full"><i class="fa-solid fa-camera"></i> Capture / Upload</button>
+                                    <img id="soOldPhotoPreview" class="w-full h-20 object-cover rounded-lg mt-2 hidden border border-slate-700" alt="Old">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="soSubmitBtn" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i> Submit Stock Out to Sheet
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- TAB 3: LOGS & HISTORY -->
+            <div id="tab-history" class="hidden space-y-6">
+                <!-- Stock Out Logs -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 md:p-6 shadow-xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-base md:text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-up-right-from-square text-rose-400"></i> Stock-Out Activity Log
+                        </h3>
+                        <button onclick="fetchAllDataFromSheet()" class="text-xs text-emerald-400 hover:underline"><i class="fa-solid fa-rotate"></i> Refresh</button>
+                    </div>
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase">
+                                    <th class="py-3 px-3">Date & Staff</th>
+                                    <th class="py-3 px-3">Product</th>
+                                    <th class="py-3 px-3 text-center">Qty</th>
+                                    <th class="py-3 px-3">Location</th>
+                                    <th class="py-3 px-3 text-center">Photos</th>
+                                    <th class="py-3 px-3 text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stockOutLogTableBody" class="divide-y divide-slate-700/50 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Public Stock-In History -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 md:p-6 shadow-xl">
+                    <h3 class="text-base md:text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-truck-ramp-box text-emerald-400"></i> Public Stock-In History
+                    </h3>
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase">
+                                    <th class="py-3 px-3">Date</th>
+                                    <th class="py-3 px-3">Product ID</th>
+                                    <th class="py-3 px-3">Product Name</th>
+                                    <th class="py-3 px-3 text-center">Added Qty</th>
+                                    <th class="py-3 px-3">Note / Supplier</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stockInHistoryTableBody" class="divide-y divide-slate-700/50 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: MANAGER CONSOLE -->
+            <div id="tab-manager" class="hidden space-y-6">
+                <div id="managerLoginGate" class="max-w-md mx-auto bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-2xl text-center">
+                    <div class="w-14 h-14 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4 text-xl border border-emerald-500/20">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-1">Manager Console</h3>
+                    <p class="text-xs text-slate-400 mb-6">PIN দিন (Default PIN: 1234)</p>
+                    <form onsubmit="handleManagerLogin(event)" class="space-y-4">
+                        <input type="password" id="managerPinInput" placeholder="••••" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-center tracking-widest text-lg text-white focus:outline-none focus:border-emerald-500">
+                        <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold rounded-xl transition">Unlock Manager</button>
+                    </form>
+                </div>
+
+                <div id="managerDashboardContent" class="hidden space-y-6">
+                    <div class="flex justify-between items-center bg-slate-800 border border-slate-700 px-5 py-3.5 rounded-2xl">
+                        <span class="text-emerald-400 font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-user-shield"></i> Manager Mode Unlocked</span>
+                        <button onclick="lockManagerSession()" class="px-3.5 py-1.5 bg-rose-500/15 text-rose-400 hover:bg-rose-500 hover:text-white rounded-xl text-xs font-semibold transition">Lock</button>
+                    </div>
+
+                    <!-- Verification Queue -->
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 md:p-6 shadow-xl">
+                        <h3 class="text-base md:text-lg font-bold text-white mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-clipboard-check text-amber-400"></i> Pending Stock-Out Approvals
+                        </h3>
+                        <div class="overflow-x-auto custom-scrollbar">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase">
+                                        <th class="py-3 px-3">Staff & Date</th>
+                                        <th class="py-3 px-3">Product</th>
+                                        <th class="py-3 px-3 text-center">Qty</th>
+                                        <th class="py-3 px-3">Villa / Room</th>
+                                        <th class="py-3 px-3 text-center">Photos</th>
+                                        <th class="py-3 px-3 text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="managerApprovalTableBody" class="divide-y divide-slate-700/50 text-sm"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Restock Existing Product -->
+                        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                                <i class="fa-solid fa-plus-circle text-emerald-400"></i> Restock Existing Product (+ In)
+                            </h3>
+                            <form onsubmit="handleRestockSubmit(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Select Product *</label>
+                                    <select id="restockProductSelect" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white"></select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Added Quantity *</label>
+                                    <input type="number" id="restockQty" min="1" value="10" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Supplier / Invoice Note</label>
+                                    <input type="text" id="restockNote" placeholder="e.g. Doha Hardware Store" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                                </div>
+                                <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold rounded-xl transition">Save Restock to Sheet</button>
+                            </form>
+                        </div>
+
+                        <!-- Add New Product -->
+                        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                                <i class="fa-solid fa-box-open text-blue-400"></i> Add New Product
+                            </h3>
+                            <form onsubmit="handleAddNewProduct(event)" class="space-y-4">
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Auto ID</label>
+                                        <input type="text" id="newProdId" readonly class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-emerald-400 font-mono font-bold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Category *</label>
+                                        <input type="text" id="newProdCategory" placeholder="e.g. Electrical" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Product Name *</label>
+                                    <input type="text" id="newProdName" placeholder="e.g. LED Flood Light 50W" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Initial Stock *</label>
+                                    <input type="number" id="newProdStock" min="0" value="10" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Product Photo (Auto-fetches if empty)</label>
+                                    <input type="file" id="newProdPhotoFile" accept="image/*" onchange="handleImageCompress(event, 'newProd')" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-300">
+                                </div>
+                                <button type="submit" class="w-full py-3 bg-blue-500 hover:bg-blue-400 text-white font-bold rounded-xl transition">Add Product to Sheet</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL: EDIT PRODUCT PHOTO -->
+    <div id="editProductPhotoModal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl relative space-y-4">
+            <button onclick="document.getElementById('editProductPhotoModal').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="text-lg font-bold text-white">Update Product Photo</h3>
+            <p id="eppProdTitle" class="text-xs text-emerald-400 font-semibold"></p>
+            <input type="hidden" id="eppProdId">
+            <div class="text-center p-4 bg-slate-900 rounded-xl border border-slate-700">
+                <img id="eppCurrentImg" src="" class="w-32 h-32 object-cover rounded-xl mx-auto mb-3 border border-slate-700" alt="Current">
+                <input type="file" id="eppNewFile" accept="image/*" onchange="handleImageCompress(event, 'epp')" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-300">
+            </div>
+            <div class="flex gap-2">
+                <button onclick="saveNewProductPhoto()" class="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold rounded-xl text-xs">Save to Sheet</button>
+                <button onclick="autoFetchGooglePhoto()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto Photo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: PHOTO COMPARISON LIGHTBOX -->
+    <div id="photoLightbox" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full p-5 shadow-2xl relative space-y-4">
+            <button onclick="document.getElementById('photoLightbox').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 id="lightboxTitle" class="text-base font-bold text-white"></h3>
+            <p id="lightboxMeta" class="text-xs text-slate-400"></p>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 text-center">
+                    <p class="text-xs font-bold text-emerald-400 mb-2">1. New Item Photo</p>
+                    <img id="lightboxNewImg" src="" class="w-full h-48 object-cover rounded-lg" alt="New">
+                </div>
+                <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 text-center">
+                    <p class="text-xs font-bold text-amber-400 mb-2">2. Old Part Photo</p>
+                    <img id="lightboxOldImg" src="" class="w-full h-48 object-cover rounded-lg" alt="Old">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-20 md:bottom-6 right-4 bg-slate-800 border border-slate-600 text-white px-4 py-3 rounded-xl shadow-2xl transform translate-y-24 opacity-0 transition-all duration-300 z-50 flex items-center gap-2.5">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toastMsg" class="text-xs md:text-sm font-medium"></span>
+    </div>
+
+    <script>
+        // Pre-configured with your live Google Apps Script Web App URL
+        let SCRIPT_URL = localStorage.getItem('gd_live_sheet_api_url') || 'https://script.google.com/macros/s/AKfycbx_jyd-VAjKSwypz5KlC9dcieqgMzfcUZT3On2UOxSQktAGCk-K3w2h0fxPnkahzdk/exec';
+        let appState = {
+            products: [],
+            stockOutLogs: [],
+            stockInLogs: [],
+            staffList: [],
+            villaList: [],
+            managerLoggedIn: false,
+            viewMode: 'grid'
+        };
+
+        let compressedImages = {
+            soNew: '',
+            soOld: '',
+            newProd: '',
+            epp: ''
+        };
+
+        function showToast(msg, type = 'success') {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = msg;
+            document.getElementById('toastIcon').className = type === 'success'
+                ? 'fa-solid fa-circle-check text-emerald-400 text-lg'
+                : 'fa-solid fa-circle-exclamation text-rose-400 text-lg';
+            t.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => t.classList.add('translate-y-24', 'opacity-0'), 3200);
+        }
+
+        function setLoading(show, text = 'Google Sheet থেকে লাইভ ডেটা লোড হচ্ছে...') {
+            const bar = document.getElementById('loadingBar');
+            document.getElementById('loadingText').textContent = text;
+            if (show) bar.classList.remove('hidden');
+            else bar.classList.add('hidden');
+        }
+
+        // Compress image to lightweight base64 so Google Sheet cells accept it cleanly
+        function handleImageCompress(event, targetKey) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const maxDim = 320;
+                    let w = img.width, h = img.height;
+                    if (w > h && w > maxDim) { h *= maxDim / w; w = maxDim; }
+                    else if (h > maxDim) { w *= maxDim / h; h = maxDim; }
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.65);
+                    compressedImages[targetKey] = dataUrl;
+
+                    if (targetKey === 'soNew') {
+                        const prev = document.getElementById('soNewPhotoPreview');
+                        prev.src = dataUrl; prev.classList.remove('hidden');
+                    } else if (targetKey === 'soOld') {
+                        const prev = document.getElementById('soOldPhotoPreview');
+                        prev.src = dataUrl; prev.classList.remove('hidden');
+                    } else if (targetKey === 'epp') {
+                        document.getElementById('eppCurrentImg').src = dataUrl;
+                    }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Fetch 100% Live Data directly from Google Sheet
+        async function fetchAllDataFromSheet() {
+            if (!SCRIPT_URL) return;
+            setLoading(true, 'Google Sheet থেকে লাইভ ডেটা লোড হচ্ছে...');
+            try {
+                const res = await fetch(SCRIPT_URL + '?action=getAll&t=' + Date.now());
+                const data = await res.json();
+                if (data.status === 'success') {
+                    appState.products = data.products || [];
+                    appState.stockOutLogs = (data.stockOutLogs || []).reverse();
+                    appState.stockInLogs = (data.stockInLogs || []).reverse();
+                    appState.staffList = data.staffList || ['SHORIF', 'ARIF', 'IBRAHIM', 'MOHIN'];
+                    appState.villaList = data.villaList || ['Villa 08', 'Villa 26', 'Villa 47', 'Villa 68', 'Ezdan 24'];
+                    refreshAllViews();
+                    showToast('Google Sheet থেকে লাইভ ডেটা আপডেট হয়েছে!');
+                } else {
+                    showToast('Sheet Error: ' + (data.message || 'Unknown error'), 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Sheet কানেক্ট করা যায়নি! Web App URL এবং Access ("Anyone") চেক করুন।', 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        async function postActionToSheet(payload, loadingMsg = 'Google Sheet-এ সেভ হচ্ছে...') {
+            if (!SCRIPT_URL) return false;
+            setLoading(true, loadingMsg);
+            try {
+                const res = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+                if (result.status === 'success') {
+                    await fetchAllDataFromSheet();
+                    return true;
+                } else {
+                    showToast('Error: ' + result.message, 'error');
+                    return false;
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('সার্ভার এরর! আবার চেষ্টা করুন।', 'error');
+                return false;
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        function switchTab(tabId) {
+            ['dashboard', 'stockout', 'history', 'manager'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                document.getElementById(`nav-${t}`).className = 'flex flex-col md:flex-row items-center md:space-x-3 px-3 md:px-4 py-2 md:py-3 rounded-xl font-medium transition text-slate-400 hover:bg-slate-700/40 hover:text-white text-xs md:text-sm';
+            });
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            document.getElementById(`nav-${tabId}`).className = 'flex flex-col md:flex-row items-center md:space-x-3 px-3 md:px-4 py-2 md:py-3 rounded-xl font-medium transition text-emerald-400 bg-slate-700/60 text-xs md:text-sm';
+        }
+
+        function setViewMode(mode) {
+            appState.viewMode = mode;
+            const gridBtn = document.getElementById('viewModeGridBtn');
+            const tableBtn = document.getElementById('viewModeTableBtn');
+            const gridView = document.getElementById('productGridView');
+            const tableView = document.getElementById('productTableView');
+            if (mode === 'grid') {
+                gridBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500 text-slate-900';
+                tableBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-white';
+                gridView.classList.remove('hidden');
+                tableView.classList.add('hidden');
+            } else {
+                tableBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500 text-slate-900';
+                gridBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-white';
+                tableView.classList.remove('hidden');
+                gridView.classList.add('hidden');
+            }
+        }
+
+        function refreshAllViews() {
+            populateFiltersAndDropdowns();
+            renderDashboard();
+            renderLogsAndHistory();
+            renderManagerQueue();
+            document.getElementById('newProdId').value = getNextProductId();
+        }
+
+        function getNextProductId() {
+            let maxNum = 100;
+            appState.products.forEach(p => {
+                const match = String(p.id).match(/(\d+)/);
+                if (match) {
+                    const num = parseInt(match[1], 10);
+                    if (num > maxNum) maxNum = num;
+                }
+            });
+            return `GD${maxNum + 1}`;
+        }
+
+        function populateFiltersAndDropdowns() {
+            const catSelect = document.getElementById('categoryFilter');
+            const currentCat = catSelect.value;
+            const categories = [...new Set(appState.products.map(p => p.category).filter(Boolean))];
+            catSelect.innerHTML = '<option value="ALL">All Categories</option>';
+            categories.forEach(c => {
+                catSelect.innerHTML += `<option value="${c}">${c}</option>`;
+            });
+            if (categories.includes(currentCat)) catSelect.value = currentCat;
+
+            const staffSel = document.getElementById('soStaffName');
+            staffSel.innerHTML = '<option value="">-- Select Staff --</option>';
+            appState.staffList.forEach(s => {
+                staffSel.innerHTML += `<option value="${s}">${s}</option>`;
+            });
+
+            const villaSel = document.getElementById('soVillaNo');
+            villaSel.innerHTML = '<option value="">-- Select Villa --</option>';
+            appState.villaList.forEach(v => {
+                villaSel.innerHTML += `<option value="${v}">${v}</option>`;
+            });
+
+            const soProd = document.getElementById('soProductSelect');
+            const reProd = document.getElementById('restockProductSelect');
+            soProd.innerHTML = '<option value="">-- Choose Product --</option>';
+            reProd.innerHTML = '<option value="">-- Choose Product --</option>';
+            appState.products.forEach(p => {
+                soProd.innerHTML += `<option value="${p.id}">${p.id} - ${p.name} (Available: ${p.currentStock})</option>`;
+                reProd.innerHTML += `<option value="${p.id}">${p.id} - ${p.name} (Current: ${p.currentStock})</option>`;
+            });
+        }
+
+        function renderDashboard() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const cat = document.getElementById('categoryFilter').value;
+            const grid = document.getElementById('productGridView');
+            const tbody = document.getElementById('productTableBody');
+
+            grid.innerHTML = '';
+            tbody.innerHTML = '';
+
+            let totalIn = 0, totalOut = 0, totalCur = 0, lowCount = 0;
+
+            appState.products.forEach(p => {
+                const tStock = Number(p.totalStock) || 0;
+                const sOut = Number(p.stockOut) || 0;
+                const cStock = Number(p.currentStock) ?? (tStock - sOut);
+                totalIn += tStock;
+                totalOut += sOut;
+                totalCur += cStock;
+                if (cStock <= 5) lowCount++;
+
+                if (search && !p.name.toLowerCase().includes(search) && !p.id.toLowerCase().includes(search)) return;
+                if (cat !== 'ALL' && p.category !== cat) return;
+
+                const photoUrl = p.photo || 'https://placehold.co/400x400/1e293b/94a3b8?text=No+Photo';
+                const stockBadgeColor = cStock <= 5 ? 'text-amber-400 border-amber-500/40' : 'text-blue-400 border-slate-700';
+
+                const card = document.createElement('div');
+                card.className = 'bg-slate-900 border border-slate-700/80 rounded-2xl p-3 flex flex-col justify-between shadow-lg hover:border-emerald-500/50 transition group';
+                card.innerHTML = `
+                    <div>
+                        <div class="relative mb-2.5 overflow-hidden rounded-xl bg-slate-950 aspect-square border border-slate-800">
+                            <img src="${photoUrl}" onclick="openEditPhotoModal('${p.id}')" class="w-full h-full object-cover group-hover:scale-105 transition duration-300 cursor-pointer" alt="${p.name}">
+                            <span class="absolute top-2 left-2 px-2 py-0.5 bg-slate-900/85 backdrop-blur text-emerald-400 font-mono text-[10px] font-bold rounded-md border border-slate-700">${p.id}</span>
+                            <span class="absolute top-2 right-2 px-2 py-0.5 bg-slate-900/85 backdrop-blur ${stockBadgeColor} font-bold text-[10px] rounded-md border">Stock: ${cStock}</span>
+                        </div>
+                        <h4 class="font-bold text-white text-xs md:text-sm line-clamp-1 mb-0.5">${p.name}</h4>
+                        <p class="text-[10px] text-slate-400 mb-2">${p.category}</p>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+                        <button onclick="openEditPhotoModal('${p.id}')" class="text-[11px] text-slate-400 hover:text-emerald-400 font-medium flex items-center gap-1"><i class="fa-solid fa-camera"></i> Photo</button>
+                        <button onclick="quickStockOut('${p.id}')" class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-900 rounded-lg text-xs font-bold shadow transition">Out</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-700/30 transition';
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3"><img src="${photoUrl}" onclick="openEditPhotoModal('${p.id}')" class="w-10 h-10 object-cover rounded-lg border border-slate-700 cursor-pointer"></td>
+                    <td class="py-2.5 px-3 font-mono text-emerald-400 text-xs">${p.id}</td>
+                    <td class="py-2.5 px-3 font-bold text-white">${p.name}</td>
+                    <td class="py-2.5 px-3 text-xs text-slate-400">${p.category}</td>
+                    <td class="py-2.5 px-3 text-center text-white">${tStock}</td>
+                    <td class="py-2.5 px-3 text-center text-rose-400">${sOut}</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-blue-400">${cStock}</td>
+                    <td class="py-2.5 px-3 text-center"><button onclick="quickStockOut('${p.id}')" class="px-3 py-1 bg-emerald-500 text-slate-900 rounded-lg text-xs font-bold">Stock Out</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('statTotalItems').textContent = appState.products.length;
+            document.getElementById('statTotalStock').textContent = totalIn;
+            document.getElementById('statTotalStockOut').textContent = totalOut;
+            document.getElementById('statCurrentStock').textContent = totalCur;
+            document.getElementById('statLowStock').textContent = lowCount;
+        }
+
+        function quickStockOut(productId) {
+            document.getElementById('soProductSelect').value = productId;
+            updateStockOutPreview();
+            switchTab('stockout');
+        }
+
+        function updateStockOutPreview() {
+            const pid = document.getElementById('soProductSelect').value;
+            const box = document.getElementById('soProductPreviewBox');
+            const p = appState.products.find(x => x.id === pid);
+            if (!p) { box.classList.add('hidden'); return; }
+            document.getElementById('soPreviewImg').src = p.photo || 'https://placehold.co/200x200/1e293b/94a3b8?text=No+Photo';
+            document.getElementById('soPreviewName').textContent = `${p.id} - ${p.name}`;
+            document.getElementById('soPreviewStock').textContent = `Available Stock: ${p.currentStock}`;
+            box.classList.remove('hidden');
+        }
+
+        async function handleStockOutSubmit(e) {
+            e.preventDefault();
+            if (!compressedImages.soNew || !compressedImages.soOld) {
+                showToast('নতুন এবং পুরানো উভয় ছবি আপলোড করা বাধ্যতামূলক!', 'error');
+                return;
+            }
+            const pid = document.getElementById('soProductSelect').value;
+            const p = appState.products.find(x => x.id === pid);
+            const qty = parseInt(document.getElementById('soQty').value, 10);
+            if (p && qty > p.currentStock) {
+                showToast(`স্টকে পর্যাপ্ত মাল নেই! বর্তমান স্টক: ${p.currentStock}`, 'error');
+                return;
+            }
+
+            const payload = {
+                action: 'ADD_STOCK_OUT',
+                productId: pid,
+                productName: p ? p.name : pid,
+                qty: qty,
+                staffName: document.getElementById('soStaffName').value,
+                villaNo: document.getElementById('soVillaNo').value,
+                room: document.getElementById('soRoom').value,
+                note: document.getElementById('soNote').value,
+                newPhoto: compressedImages.soNew,
+                oldPhoto: compressedImages.soOld
+            };
+
+            const ok = await postActionToSheet(payload, 'Google Sheet-এ Stock Out জমা হচ্ছে...');
+            if (ok) {
+                document.getElementById('stockOutForm').reset();
+                document.getElementById('soProductPreviewBox').classList.add('hidden');
+                document.getElementById('soNewPhotoPreview').classList.add('hidden');
+                document.getElementById('soOldPhotoPreview').classList.add('hidden');
+                compressedImages.soNew = '';
+                compressedImages.soOld = '';
+                showToast('Stock Out সফলভাবে Google Sheet-এ জমা হয়েছে!');
+                switchTab('history');
+            }
+        }
+
+        function renderLogsAndHistory() {
+            const outBody = document.getElementById('stockOutLogTableBody');
+            outBody.innerHTML = '';
+            appState.stockOutLogs.forEach(l => {
+                const badge = l.status === 'Approved'
+                    ? '<span class="px-2.5 py-0.5 bg-emerald-500/15 text-emerald-400 rounded-full text-xs font-bold">Approved</span>'
+                    : l.status === 'Rejected'
+                    ? '<span class="px-2.5 py-0.5 bg-rose-500/15 text-rose-400 rounded-full text-xs font-bold">Rejected</span>'
+                    : '<span class="px-2.5 py-0.5 bg-amber-500/15 text-amber-400 rounded-full text-xs font-bold">Pending</span>';
+
+                outBody.innerHTML += `
+                    <tr class="hover:bg-slate-700/30">
+                        <td class="py-3 px-3"><p class="font-bold text-white">${l.staffName}</p><p class="text-[10px] text-slate-400">${l.timestamp}</p></td>
+                        <td class="py-3 px-3"><p class="font-bold text-white">${l.productName}</p><p class="text-[10px] font-mono text-emerald-400">${l.productId}</p></td>
+                        <td class="py-3 px-3 text-center font-bold text-rose-400">${l.qty}</td>
+                        <td class="py-3 px-3"><p class="text-slate-200 font-semibold">${l.villaNo}</p><p class="text-[10px] text-slate-400">${l.room}</p></td>
+                        <td class="py-3 px-3 text-center"><button onclick="openLightbox('${l.logId}')" class="px-2.5 py-1 bg-blue-500/15 text-blue-400 rounded-lg text-xs font-semibold">View Photos</button></td>
+                        <td class="py-3 px-3 text-center">${badge}</td>
+                    </tr>
+                `;
+            });
+
+            const inBody = document.getElementById('stockInHistoryTableBody');
+            inBody.innerHTML = '';
+            appState.stockInLogs.forEach(h => {
+                inBody.innerHTML += `
+                    <tr class="hover:bg-slate-700/30">
+                        <td class="py-3 px-3 text-xs text-slate-400">${h.timestamp}</td>
+                        <td class="py-3 px-3 font-mono text-xs text-emerald-400">${h.productId}</td>
+                        <td class="py-3 px-3 font-bold text-white">${h.productName}</td>
+                        <td class="py-3 px-3 text-center font-bold text-emerald-400">+${h.addedQty}</td>
+                        <td class="py-3 px-3 text-xs text-slate-300">${h.note}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function openLightbox(logId) {
+            const l = appState.stockOutLogs.find(x => x.logId === logId);
+            if (!l) return;
+            document.getElementById('lightboxTitle').textContent = `${l.productName} (${l.productId})`;
+            document.getElementById('lightboxMeta').textContent = `Staff: ${l.staffName} | ${l.villaNo} (${l.room}) | ${l.timestamp}`;
+            document.getElementById('lightboxNewImg').src = l.newPhoto || 'https://placehold.co/400x400/1e293b/94a3b8?text=No+New+Photo';
+            document.getElementById('lightboxOldImg').src = l.oldPhoto || 'https://placehold.co/400x400/1e293b/94a3b8?text=No+Old+Photo';
+            document.getElementById('photoLightbox').classList.remove('hidden');
+        }
+
+        function openEditPhotoModal(pid) {
+            const p = appState.products.find(x => x.id === pid);
+            if (!p) return;
+            document.getElementById('eppProdId').value = p.id;
+            document.getElementById('eppProdTitle').textContent = `${p.id} - ${p.name}`;
+            document.getElementById('eppCurrentImg').src = p.photo || 'https://placehold.co/300x300/1e293b/94a3b8?text=No+Photo';
+            compressedImages.epp = '';
+            document.getElementById('eppNewFile').value = '';
+            document.getElementById('editProductPhotoModal').classList.remove('hidden');
+        }
+
+        async function saveNewProductPhoto() {
+            const pid = document.getElementById('eppProdId').value;
+            if (!compressedImages.epp) {
+                showToast('আগে একটি নতুন ছবি সিলেক্ট করুন!', 'error');
+                return;
+            }
+            document.getElementById('editProductPhotoModal').classList.add('hidden');
+            const ok = await postActionToSheet({
+                action: 'UPDATE_PHOTO',
+                productId: pid,
+                photo: compressedImages.epp
+            }, 'Google Sheet-এ ছবি আপডেট হচ্ছে...');
+            if (ok) showToast('প্রোডাক্টের ছবি সফলভাবে আপডেট হয়েছে!');
+        }
+
+        async function autoFetchGooglePhoto() {
+            const pid = document.getElementById('eppProdId').value;
+            const p = appState.products.find(x => x.id === pid);
+            if (!p) return;
+            const query = encodeURIComponent(p.name + ' hardware tool');
+            const autoUrl = `https://source.unsplash.com/400x400/?${query}`;
+            document.getElementById('editProductPhotoModal').classList.add('hidden');
+            const ok = await postActionToSheet({
+                action: 'UPDATE_PHOTO',
+                productId: pid,
+                photo: autoUrl
+            }, 'অটো ছবি সেট হচ্ছে...');
+            if (ok) showToast('নতুন ছবি সফলভাবে যুক্ত হয়েছে!');
+        }
+
+        function handleManagerLogin(e) {
+            e.preventDefault();
+            if (document.getElementById('managerPinInput').value === '1234') {
+                appState.managerLoggedIn = true;
+                document.getElementById('managerLoginGate').classList.add('hidden');
+                document.getElementById('managerDashboardContent').classList.remove('hidden');
+                renderManagerQueue();
+                showToast('Manager Mode Unlocked');
+            } else {
+                showToast('ভুল PIN! সঠিক PIN: 1234', 'error');
+            }
+        }
+
+        function lockManagerSession() {
+            appState.managerLoggedIn = false;
+            document.getElementById('managerLoginGate').classList.remove('hidden');
+            document.getElementById('managerDashboardContent').classList.add('hidden');
+            document.getElementById('managerPinInput').value = '';
+        }
+
+        function renderManagerQueue() {
+            const tbody = document.getElementById('managerApprovalTableBody');
+            tbody.innerHTML = '';
+            appState.stockOutLogs.forEach(l => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-700/30">
+                        <td class="py-3 px-3"><p class="font-bold text-white">${l.staffName}</p><p class="text-[10px] text-slate-400">${l.timestamp}</p></td>
+                        <td class="py-3 px-3"><p class="font-bold text-white">${l.productName}</p><p class="text-[10px] font-mono text-emerald-400">${l.productId}</p></td>
+                        <td class="py-3 px-3 text-center font-bold text-rose-400">${l.qty}</td>
+                        <td class="py-3 px-3"><p class="text-slate-200 font-semibold">${l.villaNo}</p><p class="text-[10px] text-slate-400">${l.room}</p></td>
+                        <td class="py-3 px-3 text-center"><button onclick="openLightbox('${l.logId}')" class="px-2.5 py-1 bg-blue-500/15 text-blue-400 rounded-lg text-xs font-semibold">Verify</button></td>
+                        <td class="py-3 px-3 text-center">
+                            ${l.status === 'Approved' ? '<span class="text-emerald-400 font-bold text-xs">Approved</span>' :
+                              l.status === 'Rejected' ? '<span class="text-rose-400 font-bold text-xs">Rejected</span>' :
+                              `<div class="flex justify-center gap-1">
+                                  <button onclick="updateLogStatus('${l.logId}', 'Approved')" class="px-2.5 py-1 bg-emerald-500 text-slate-900 rounded-lg text-xs font-bold">Approve</button>
+                                  <button onclick="updateLogStatus('${l.logId}', 'Rejected')" class="px-2.5 py-1 bg-rose-500 text-white rounded-lg text-xs font-bold">Reject</button>
+                               </div>`}
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function updateLogStatus(logId, status) {
+            const ok = await postActionToSheet({
+                action: 'UPDATE_STATUS',
+                logId: logId,
+                status: status
+            }, `Status "${status}" আপডেট হচ্ছে...`);
+            if (ok) showToast(`রিকোয়েস্ট ${status} করা হয়েছে!`);
+        }
+
+        async function handleRestockSubmit(e) {
+            e.preventDefault();
+            const pid = document.getElementById('restockProductSelect').value;
+            const p = appState.products.find(x => x.id === pid);
+            const qty = parseInt(document.getElementById('restockQty').value, 10);
+            const note = document.getElementById('restockNote').value || 'Manager Restock';
+
+            const ok = await postActionToSheet({
+                action: 'RESTOCK',
+                productId: pid,
+                productName: p ? p.name : pid,
+                addedQty: qty,
+                note: note
+            }, 'Google Sheet-এ স্টক যোগ হচ্ছে...');
+            if (ok) {
+                document.getElementById('restockNote').value = '';
+                showToast(`+${qty} পিস সফলভাবে স্টকে যোগ হয়েছে!`);
+            }
+        }
+
+        async function handleAddNewProduct(e) {
+            e.preventDefault();
+            const pid = document.getElementById('newProdId').value;
+            const name = document.getElementById('newProdName').value.trim().toUpperCase();
+            const category = document.getElementById('newProdCategory').value.trim();
+            const stock = parseInt(document.getElementById('newProdStock').value, 10);
+            const photo = compressedImages.newProd || `https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=400&auto=format&fit=crop&q=80`;
+
+            const ok = await postActionToSheet({
+                action: 'ADD_PRODUCT',
+                productId: pid,
+                productName: name,
+                category: category,
+                totalStock: stock,
+                photo: photo
+            }, 'নতুন প্রোডাক্ট Google Sheet-এ সেভ হচ্ছে...');
+            if (ok) {
+                document.getElementById('newProdName').value = '';
+                document.getElementById('newProdPhotoFile').value = '';
+                compressedImages.newProd = '';
+                showToast(`নতুন প্রোডাক্ট ${pid} (${name}) যুক্ত হয়েছে!`);
+            }
+        }
+
+        window.onload = function() {
+            fetchAllDataFromSheet();
+        };
+    </script>
+</body>
+</html>
