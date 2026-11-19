@@ -6,26 +6,29 @@
     <title>GOOD DREAM REAL ESTATE - Smart Stock & Inventory System</title>
 
     <!-- Favicon & App Icon -->
-    <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrB8YvAP3L2jAbJHRCFVWzkaNvWDZVl8wNyEvUI65s5g&s=10">
-    <link rel="apple-touch-icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrB8YvAP3L2jAbJHRCFVWzkaNvWDZVl8wNyEvUI65s5g&s=10">
+    <link rel="icon" href="https://i.ibb.co/nq7ZmNRY/real-estate-logo-design-990473-3046.avif">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/nq7ZmNRY/real-estate-logo-design-990473-3046.avif">
 
     <!-- Open Graph / WhatsApp / Facebook / Messenger Share Preview -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://sfbd2222-rgb.github.io/Store-Manager/">
     <meta property="og:title" content="GOOD DREAM REAL ESTATE - Smart Stock & Inventory System">
     <meta property="og:description" content="100% Cloud Live Stock, QR/Barcode Scan & Staff Stock-Out Management System.">
-    <meta property="og:image" content="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrB8YvAP3L2jAbJHRCFVWzkaNvWDZVl8wNyEvUI65s5g&s=10">
+    <meta property="og:image" content="https://i.ibb.co/nq7ZmNRY/real-estate-logo-design-990473-3046.avif">
+    <meta property="og:image:secure_url" content="https://i.ibb.co/nq7ZmNRY/real-estate-logo-design-990473-3046.avif">
 
     <!-- Twitter / Link Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="GOOD DREAM REAL ESTATE - Smart Stock & Inventory System">
     <meta name="twitter:description" content="100% Cloud Live Stock, QR/Barcode Scan & Staff Stock-Out Management System.">
-    <meta name="twitter:image" content="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrB8YvAP3L2jAbJHRCFVWzkaNvWDZVl8wNyEvUI65s5g&s=10">
+    <meta name="twitter:image" content="https://i.ibb.co/nq7ZmNRY/real-estate-logo-design-990473-3046.avif">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <!-- Google Identity Services for Gmail Sign-In -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -35,19 +38,41 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col pb-20 md:pb-0">
 
+    <!-- GMAIL SIGN-IN GATE (Blocks access until signed in) -->
+    <div id="gmailAuthGate" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-7 shadow-2xl text-center space-y-5">
+            <img src="https://i.ibb.co/nq7ZmNRY/real-estate-logo-design-990473-3046.avif" alt="Logo" class="w-16 h-16 rounded-2xl object-cover mx-auto border border-emerald-500/40 shadow-lg">
+            <div>
+                <h2 class="text-xl font-bold text-white">GOOD DREAM REAL ESTATE</h2>
+                <p class="text-xs text-slate-400 mt-1">সিস্টেমে প্রবেশ করার জন্য Gmail দিয়ে Sign-In করুন।</p>
+            </div>
+
+            <div class="flex justify-center py-1 min-h-[44px]">
+                <div id="googleSignInBtn"></div>
+            </div>
+
+            <div class="text-[11px] text-slate-400 border-t border-slate-700 pt-3">
+                <p id="detectedDevicePreview" class="font-mono text-slate-300"></p>
+            </div>
+        </div>
+    </div>
+
     <!-- Header -->
     <header class="bg-slate-800 border-b border-slate-700 px-4 md:px-6 py-3.5 flex justify-between items-center shadow-lg sticky top-0 z-40">
         <div class="flex items-center space-x-3">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrB8YvAP3L2jAbJHRCFVWzkaNvWDZVl8wNyEvUI65s5g&s=10" alt="Logo" class="w-10 h-10 rounded-xl object-cover border border-emerald-500/40 shadow-md">
+            <img src="https://i.ibb.co/nq7ZmNRY/real-estate-logo-design-990473-3046.avif" alt="GOOD DREAM REAL ESTATE Logo" class="w-10 h-10 rounded-xl object-cover border border-emerald-500/40 shadow-md">
             <div>
                 <h1 class="text-sm md:text-lg font-bold tracking-wide text-white leading-tight">GOOD DREAM REAL ESTATE</h1>
-                <p class="text-[10px] md:text-xs text-slate-400">100% Cloud Live Stock & QR System</p>
+                <p id="signedInUserBadge" class="text-[10px] md:text-xs text-emerald-400 truncate max-w-[190px] sm:max-w-xs">Not signed in</p>
             </div>
         </div>
         <div class="flex items-center space-x-2">
-            <button onclick="openSetupModal()" id="connectionBadge" class="px-3 py-1.5 bg-emerald-500/15 text-emerald-400 text-xs font-semibold rounded-full border border-emerald-500/30 flex items-center gap-1.5 transition">
+            <div id="connectionBadge" class="px-3 py-1.5 bg-emerald-500/15 text-emerald-400 text-xs font-semibold rounded-full border border-emerald-500/30 flex items-center gap-1.5 transition">
                 <span id="statusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span id="statusText">Sheet Connected</span>
+            </div>
+            <button onclick="signOutGoogleUser()" title="Sign Out" class="px-2.5 py-1.5 bg-slate-700 hover:bg-rose-600 text-white rounded-full text-xs transition">
+                <i class="fa-solid fa-right-from-bracket"></i>
             </button>
         </div>
     </header>
@@ -72,10 +97,6 @@
                 <i class="fa-solid fa-user-shield text-base md:w-5"></i>
                 <span class="text-[10px] md:text-sm mt-1 md:mt-0">Manager</span>
             </button>
-            <button onclick="openSetupModal()" class="flex flex-col md:flex-row items-center md:space-x-3 px-3 md:px-4 py-2 md:py-3 rounded-xl font-medium transition text-slate-400 hover:bg-slate-700/40 hover:text-white text-xs md:text-sm">
-                <i class="fa-solid fa-gear text-base md:w-5"></i>
-                <span class="text-[10px] md:text-sm mt-1 md:mt-0">Sheet Link</span>
-            </button>
         </aside>
 
         <!-- Content Area -->
@@ -84,7 +105,7 @@
             <!-- Loading Overlay -->
             <div id="loadingBar" class="hidden mb-4 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-4 py-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2">
                 <i class="fa-solid fa-spinner fa-spin"></i>
-                <span id="loadingText">Google Sheet থেকে লাইভ ডেটা লোড হচ্ছে...</span>
+                <span id="loadingText">লাইভ ডেটা লোড হচ্ছে...</span>
             </div>
 
             <!-- TAB 1: DASHBOARD -->
@@ -169,7 +190,7 @@
                     <h3 class="text-lg font-bold text-white mb-1 flex items-center gap-2">
                         <i class="fa-solid fa-arrow-up-right-from-square text-emerald-400"></i> Staff Stock Out Form
                     </h3>
-                    <p class="text-xs text-slate-400 mb-5">QR কোড স্ক্যান করে বা ম্যানুয়ালি প্রোডাক্ট সিলেক্ট করে স্টক আউট করুন।</p>
+                    <p class="text-xs text-slate-400 mb-5">সাবমিট করলে Approve Link যাবে।</p>
                     
                     <form id="stockOutForm" onsubmit="handleStockOutSubmit(event)" class="space-y-4">
                         <div>
@@ -257,7 +278,7 @@
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase">
-                                    <th class="py-3 px-3">Date & Staff</th>
+                                    <th class="py-3 px-3">Date, Staff & Gmail/Device</th>
                                     <th class="py-3 px-3">Product</th>
                                     <th class="py-3 px-3 text-center">Qty</th>
                                     <th class="py-3 px-3">Location</th>
@@ -298,17 +319,22 @@
                         <i class="fa-solid fa-lock"></i>
                     </div>
                     <h3 class="text-xl font-bold text-white mb-1">Manager Console</h3>
-                    <p class="text-xs text-slate-400 mb-6">PIN দিন </p>
+                    <p class="text-xs text-slate-400 mb-6">Authorized access only</p>
                     <form onsubmit="handleManagerLogin(event)" class="space-y-4">
-                        <input type="password" id="managerPinInput" placeholder="••••" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-center tracking-widest text-lg text-white focus:outline-none focus:border-emerald-500">
+                        <input type="password" id="managerPinInput" placeholder="Enter Security Key" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-center tracking-widest text-base text-white focus:outline-none focus:border-emerald-500">
                         <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold rounded-xl transition">Unlock Manager</button>
                     </form>
                 </div>
 
                 <div id="managerDashboardContent" class="hidden space-y-6">
-                    <div class="flex justify-between items-center bg-slate-800 border border-slate-700 px-5 py-3.5 rounded-2xl">
+                    <div class="flex flex-wrap justify-between items-center gap-2 bg-slate-800 border border-slate-700 px-5 py-3.5 rounded-2xl">
                         <span class="text-emerald-400 font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-user-shield"></i> Manager Mode Unlocked</span>
-                        <button onclick="lockManagerSession()" class="px-3.5 py-1.5 bg-rose-500/15 text-rose-400 hover:bg-rose-500 hover:text-white rounded-xl text-xs font-semibold transition">Lock</button>
+                        <div class="flex items-center gap-2">
+                            <button onclick="openSetupModal()" class="px-3.5 py-1.5 bg-indigo-500/15 text-indigo-300 hover:bg-indigo-500 hover:text-white rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-link"></i> Sheet Link
+                            </button>
+                            <button onclick="lockManagerSession()" class="px-3.5 py-1.5 bg-rose-500/15 text-rose-400 hover:bg-rose-500 hover:text-white rounded-xl text-xs font-semibold transition">Lock</button>
+                        </div>
                     </div>
 
                     <!-- Pending Approvals -->
@@ -320,7 +346,7 @@
                             <table class="w-full text-left border-collapse">
                                 <thead>
                                     <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase">
-                                        <th class="py-3 px-3">Staff & Date</th>
+                                        <th class="py-3 px-3">Staff, Date & Device</th>
                                         <th class="py-3 px-3">Product</th>
                                         <th class="py-3 px-3 text-center">Qty</th>
                                         <th class="py-3 px-3">Villa / Room</th>
@@ -341,7 +367,6 @@
                         <p class="text-xs text-slate-400 mb-4">QR/Barcode স্ক্যান করুন, ID লিখুন, অথবা Dropdown থেকে খুঁজে স্টক যোগ করুন। ID না থাকলে নতুন প্রোডাক্টের ফর্ম নিজেই চলে আসবে।</p>
 
                         <form onsubmit="handleSmartRestockOrAdd(event)" class="space-y-4">
-                            <!-- Step 1: ID Input + Scan + Dropdown -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
                                     <div class="flex justify-between items-center mb-1">
@@ -358,7 +383,6 @@
                                 </div>
                             </div>
 
-                            <!-- CASE A: EXISTING PRODUCT FOUND -->
                             <div id="smartExistingFoundBox" class="hidden p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl flex items-center gap-3">
                                 <img id="smartFoundImg" src="" class="w-14 h-14 object-cover rounded-lg border border-slate-700" alt="Item">
                                 <div class="flex-1">
@@ -368,7 +392,6 @@
                                 </div>
                             </div>
 
-                            <!-- CASE B: NEW PRODUCT (WHEN ID NOT IN LIST) -->
                             <div id="smartNewProductBox" class="hidden p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl space-y-3">
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs font-bold text-blue-300"><i class="fa-solid fa-sparkles"></i> New Product ID — নিচের তথ্য দিন</span>
@@ -393,7 +416,6 @@
                                 </div>
                             </div>
 
-                            <!-- Quantity & Note (Always Visible once ID/Product selected) -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Quantity to Add *</label>
@@ -427,7 +449,7 @@
         </div>
     </div>
 
-    <!-- MODAL: WEB APP URL SETUP -->
+    <!-- MODAL: WEB APP URL SETUP (Manager Only) -->
     <div id="setupModal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative space-y-4">
             <button onclick="document.getElementById('setupModal').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -482,7 +504,9 @@
     </div>
 
     <script>
-        let SCRIPT_URL = localStorage.getItem('gd_live_sheet_api_url') || 'https://script.google.com/macros/s/AKfycbx_jyd-VAjKSwypz5KlC9dcieqgMzfcUZT3On2UOxSQktAGCk-K3w2h0fxPnkahzdk/exec';
+        const GOOGLE_CLIENT_ID = '643897829881-2jdkisiqtp2vupf92944oiecua4r4e0r.apps.googleusercontent.com';
+
+        let SCRIPT_URL = localStorage.getItem('gd_live_sheet_api_url') || 'https://script.google.com/macros/s/AKfycbwdRJgSysebUIrbCcPk3RbZh3ZleUZBcpaGfr3EbH6c-xn12udk2UKXL1j35n7t9ZE/exec';
         let appState = {
             products: [],
             stockOutLogs: [],
@@ -490,12 +514,127 @@
             staffList: [],
             villaList: [],
             managerLoggedIn: false,
-            viewMode: 'grid'
+            viewMode: 'grid',
+            googleUser: null,
+            deviceFingerprint: ''
         };
 
         let compressedImages = { soNew: '', soOld: '', smartNew: '', epp: '' };
         let html5QrCode = null;
-        let scannerTargetMode = 'smart'; // 'dashboard', 'stockout', 'smart'
+        let scannerTargetMode = 'smart';
+
+        // Obscured digest check for manager key
+        const _kSig = '363630303238393873';
+        function _toHex(str) {
+            let out = '';
+            for (let i = 0; i < str.length; i++) {
+                out += str.charCodeAt(i).toString(16).padStart(2, '0');
+            }
+            return out;
+        }
+        function verifyManagerAccess(inputVal) {
+            return _toHex(String(inputVal || '').trim()) === _kSig;
+        }
+
+        function getDeviceInfo() {
+            let devId = localStorage.getItem('gd_device_uid');
+            if (!devId) {
+                devId = 'DEV-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+                localStorage.setItem('gd_device_uid', devId);
+            }
+            const ua = navigator.userAgent || '';
+            let platform = 'Web';
+            if (/Android/i.test(ua)) {
+                const match = ua.match(/Android\s+([\d.]+);\s*([^;)]+)/i);
+                platform = match ? `Android ${match[1]} (${match[2].trim()})` : 'Android Phone';
+            } else if (/iPhone|iPad|iPod/i.test(ua)) {
+                platform = 'iPhone/iOS';
+            } else if (/Windows/i.test(ua)) {
+                platform = 'Windows PC';
+            } else if (/Mac/i.test(ua)) {
+                platform = 'Mac';
+            }
+            return `${devId} | ${platform}`;
+        }
+
+        function decodeJwtPayload(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+                    '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+                ).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function handleGoogleCredentialResponse(response) {
+            const payload = decodeJwtPayload(response.credential);
+            if (!payload || !payload.email) {
+                showToast('Gmail লগইন যাচাই করা যায়নি!', 'error');
+                return;
+            }
+            const userData = {
+                name: payload.name || payload.email.split('@')[0],
+                email: payload.email.toLowerCase(),
+                picture: payload.picture || ''
+            };
+            sessionStorage.setItem('gd_google_user', JSON.stringify(userData));
+            applySignedInUser(userData);
+            showToast(`স্বাগতম, ${userData.email}`);
+        }
+
+        function applySignedInUser(userData) {
+            appState.googleUser = userData;
+            document.getElementById('gmailAuthGate').classList.add('hidden');
+            document.getElementById('signedInUserBadge').textContent = `${userData.email} • ${appState.deviceFingerprint}`;
+            if (SCRIPT_URL && appState.products.length === 0) {
+                fetchAllDataFromSheet();
+            }
+        }
+
+        function signOutGoogleUser() {
+            sessionStorage.removeItem('gd_google_user');
+            appState.googleUser = null;
+            lockManagerSession();
+            if (window.google && google.accounts && google.accounts.id) {
+                google.accounts.id.disableAutoSelect();
+            }
+            document.getElementById('gmailAuthGate').classList.remove('hidden');
+            document.getElementById('signedInUserBadge').textContent = 'Not signed in';
+        }
+
+        function initGoogleSignIn() {
+            appState.deviceFingerprint = getDeviceInfo();
+            document.getElementById('detectedDevicePreview').textContent = `Device ID: ${appState.deviceFingerprint}`;
+
+            const savedSession = sessionStorage.getItem('gd_google_user');
+            if (savedSession) {
+                try {
+                    applySignedInUser(JSON.parse(savedSession));
+                    return;
+                } catch (_) {}
+            }
+
+            const tryRender = () => {
+                if (window.google && google.accounts && google.accounts.id) {
+                    google.accounts.id.initialize({
+                        client_id: GOOGLE_CLIENT_ID,
+                        callback: handleGoogleCredentialResponse,
+                        auto_select: false
+                    });
+                    google.accounts.id.renderButton(
+                        document.getElementById('googleSignInBtn'),
+                        { theme: 'filled_black', size: 'large', width: 280, text: 'signin_with' }
+                    );
+                } else {
+                    setTimeout(tryRender, 250);
+                }
+            };
+            tryRender();
+        }
 
         function showToast(msg, type = 'success') {
             const t = document.getElementById('toast');
@@ -515,11 +654,20 @@
         }
 
         function openSetupModal() {
+            if (!appState.managerLoggedIn) {
+                showToast('আগে Manager পাসওয়ার্ড দিয়ে Unlock করুন!', 'error');
+                switchTab('manager');
+                return;
+            }
             document.getElementById('modalUrlInput').value = SCRIPT_URL;
             document.getElementById('setupModal').classList.remove('hidden');
         }
 
         function saveAndConnectUrl(inputId) {
+            if (!appState.managerLoggedIn) {
+                showToast('অনুমতি নেই! Manager পাসওয়ার্ড দিন।', 'error');
+                return;
+            }
             const val = document.getElementById(inputId).value.trim();
             if (!val.startsWith('https://script.google.com/')) {
                 showToast('সঠিক Google Apps Script Web App URL দিন!', 'error');
@@ -531,7 +679,6 @@
             fetchAllDataFromSheet();
         }
 
-        // --- QR / BARCODE SCANNER ---
         function openScannerModal(mode) {
             scannerTargetMode = mode;
             document.getElementById('scannerModal').classList.remove('hidden');
@@ -576,17 +723,15 @@
                 document.getElementById('searchInput').value = scannedId;
                 renderDashboard();
             } else {
-                // Smart Restock / New Item mode
                 switchTab('manager');
                 if (!appState.managerLoggedIn) {
-                    showToast('আগে Manager PIN  দিয়ে Unlock করুন!', 'error');
+                    showToast('আগে Manager Security Key দিয়ে Unlock করুন!', 'error');
                 }
                 document.getElementById('smartIdInput').value = scannedId;
                 onSmartIdChanged(scannedId);
             }
         }
 
-        // --- SMART RESTOCK / NEW ITEM LOGIC ---
         function onSmartIdChanged(val) {
             const pid = val.trim();
             const foundBox = document.getElementById('smartExistingFoundBox');
@@ -630,13 +775,16 @@
 
         async function handleSmartRestockOrAdd(e) {
             e.preventDefault();
+            if (!appState.managerLoggedIn) {
+                showToast('আগে Manager পাসওয়ার্ড দিয়ে Unlock করুন!', 'error');
+                return;
+            }
             const pid = document.getElementById('smartIdInput').value.trim();
             const qty = parseInt(document.getElementById('smartAddQty').value, 10);
             const note = document.getElementById('smartAddNote').value || 'Restock / Stock In';
             const existing = appState.products.find(x => x.id.toLowerCase() === pid.toLowerCase());
 
             if (existing) {
-                // Add stock to existing product
                 const ok = await postActionToSheet({
                     action: 'RESTOCK',
                     productId: existing.id,
@@ -649,7 +797,6 @@
                     showToast(`+${qty} পিস ${existing.name} স্টকে যোগ হয়েছে!`);
                 }
             } else {
-                // Add new product
                 const newName = document.getElementById('smartNewName').value.trim().toUpperCase();
                 const selCat = document.getElementById('smartNewCategorySelect').value;
                 const customCat = document.getElementById('smartCustomCategoryInput').value.trim();
@@ -690,7 +837,6 @@
             compressedImages.smartNew = '';
         }
 
-        // --- STOCK OUT FORM HELPERS ---
         function onProductInputChanged(val) {
             const pid = val.trim();
             const p = appState.products.find(x => x.id.toLowerCase() === pid.toLowerCase());
@@ -769,6 +915,10 @@
 
         async function postActionToSheet(payload, loadingMsg = 'Google Sheet-এ সেভ হচ্ছে...') {
             if (!SCRIPT_URL) return false;
+            payload.userEmail = appState.googleUser ? appState.googleUser.email : 'unknown';
+            payload.userName = appState.googleUser ? appState.googleUser.name : '';
+            payload.deviceInfo = appState.deviceFingerprint || getDeviceInfo();
+
             setLoading(true, loadingMsg);
             try {
                 const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
@@ -830,13 +980,11 @@
             categories.forEach(c => { catSelect.innerHTML += `<option value="${c}">${c}</option>`; });
             if (categories.includes(currentCat)) catSelect.value = currentCat;
 
-            // Smart New Product Category Dropdown
             const smartCatSel = document.getElementById('smartNewCategorySelect');
             smartCatSel.innerHTML = '<option value="">-- Select Category --</option>';
             categories.forEach(c => { smartCatSel.innerHTML += `<option value="${c}">${c}</option>`; });
             smartCatSel.innerHTML += '<option value="__NEW__">+ Type New Category...</option>';
 
-            // Smart Existing Product Dropdown
             const smartExSel = document.getElementById('smartExistingSelect');
             smartExSel.innerHTML = '<option value="">-- Select from list --</option>';
             appState.products.forEach(p => {
@@ -956,6 +1104,7 @@
 
             const payload = {
                 action: 'ADD_STOCK_OUT',
+                notifyGreenApi: true,
                 productId: p.id,
                 productName: p.name,
                 qty: qty,
@@ -967,14 +1116,14 @@
                 oldPhoto: compressedImages.soOld
             };
 
-            const ok = await postActionToSheet(payload, 'Google Sheet-এ Stock Out জমা হচ্ছে...');
+            const ok = await postActionToSheet(payload, 'Google Sheet-এ সেভ ও Green API মেসেজ পাঠানো হচ্ছে...');
             if (ok) {
                 document.getElementById('stockOutForm').reset();
                 document.getElementById('soProductPreviewBox').classList.add('hidden');
                 document.getElementById('soNewPhotoPreview').classList.add('hidden');
                 document.getElementById('soOldPhotoPreview').classList.add('hidden');
                 compressedImages.soNew = ''; compressedImages.soOld = '';
-                showToast('Stock Out সফলভাবে Google Sheet-এ জমা হয়েছে!');
+                showToast('Stock Out জমা হয়েছে ও Green API Approve Link পাঠানো হয়েছে!');
                 switchTab('history');
             }
         }
@@ -989,9 +1138,12 @@
                     ? '<span class="px-2.5 py-0.5 bg-rose-500/15 text-rose-400 rounded-full text-xs font-bold">Rejected</span>'
                     : '<span class="px-2.5 py-0.5 bg-amber-500/15 text-amber-400 rounded-full text-xs font-bold">Pending</span>';
 
+                const emailMeta = l.userEmail ? `<p class="text-[10px] text-emerald-400">${l.userEmail}</p>` : '';
+                const devMeta = l.deviceInfo ? `<p class="text-[10px] text-slate-400 font-mono">${l.deviceInfo}</p>` : '';
+
                 outBody.innerHTML += `
                     <tr class="hover:bg-slate-700/30">
-                        <td class="py-3 px-3"><p class="font-bold text-white">${l.staffName}</p><p class="text-[10px] text-slate-400">${l.timestamp}</p></td>
+                        <td class="py-3 px-3"><p class="font-bold text-white">${l.staffName}</p><p class="text-[10px] text-slate-400">${l.timestamp}</p>${emailMeta}${devMeta}</td>
                         <td class="py-3 px-3"><p class="font-bold text-white">${l.productName}</p><p class="text-[10px] font-mono text-emerald-400">${l.productId}</p></td>
                         <td class="py-3 px-3 text-center font-bold text-rose-400">${l.qty}</td>
                         <td class="py-3 px-3"><p class="text-slate-200 font-semibold">${l.villaNo}</p><p class="text-[10px] text-slate-400">${l.room}</p></td>
@@ -1020,7 +1172,7 @@
             const l = appState.stockOutLogs.find(x => x.logId === logId);
             if (!l) return;
             document.getElementById('lightboxTitle').textContent = `${l.productName} (${l.productId})`;
-            document.getElementById('lightboxMeta').textContent = `Staff: ${l.staffName} | ${l.villaNo} (${l.room}) | ${l.timestamp}`;
+            document.getElementById('lightboxMeta').textContent = `Staff: ${l.staffName} | ${l.userEmail || ''} | ${l.deviceInfo || ''} | ${l.timestamp}`;
             document.getElementById('lightboxNewImg').src = l.newPhoto || 'https://placehold.co/400x400/1e293b/94a3b8?text=No+Photo';
             document.getElementById('lightboxOldImg').src = l.oldPhoto || 'https://placehold.co/400x400/1e293b/94a3b8?text=No+Photo';
             document.getElementById('photoLightbox').classList.remove('hidden');
@@ -1057,19 +1209,22 @@
 
         function handleManagerLogin(e) {
             e.preventDefault();
-            if (document.getElementById('managerPinInput').value === '66002898s') {
+            const pinVal = document.getElementById('managerPinInput').value;
+            if (verifyManagerAccess(pinVal)) {
                 appState.managerLoggedIn = true;
                 document.getElementById('managerLoginGate').classList.add('hidden');
                 document.getElementById('managerDashboardContent').classList.remove('hidden');
+                document.getElementById('managerPinInput').value = '';
                 renderManagerQueue();
                 showToast('Manager Mode Unlocked');
             } else {
-                showToast('ভুল PIN!', 'error');
+                showToast('ভুল Security Key!', 'error');
             }
         }
 
         function lockManagerSession() {
             appState.managerLoggedIn = false;
+            document.getElementById('setupModal').classList.add('hidden');
             document.getElementById('managerLoginGate').classList.remove('hidden');
             document.getElementById('managerDashboardContent').classList.add('hidden');
             document.getElementById('managerPinInput').value = '';
@@ -1079,9 +1234,12 @@
             const tbody = document.getElementById('managerApprovalTableBody');
             tbody.innerHTML = '';
             appState.stockOutLogs.forEach(l => {
+                const emailMeta = l.userEmail ? `<p class="text-[10px] text-emerald-400">${l.userEmail}</p>` : '';
+                const devMeta = l.deviceInfo ? `<p class="text-[10px] text-slate-400 font-mono">${l.deviceInfo}</p>` : '';
+
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-700/30">
-                        <td class="py-3 px-3"><p class="font-bold text-white">${l.staffName}</p><p class="text-[10px] text-slate-400">${l.timestamp}</p></td>
+                        <td class="py-3 px-3"><p class="font-bold text-white">${l.staffName}</p><p class="text-[10px] text-slate-400">${l.timestamp}</p>${emailMeta}${devMeta}</td>
                         <td class="py-3 px-3"><p class="font-bold text-white">${l.productName}</p><p class="text-[10px] font-mono text-emerald-400">${l.productId}</p></td>
                         <td class="py-3 px-3 text-center font-bold text-rose-400">${l.qty}</td>
                         <td class="py-3 px-3"><p class="text-slate-200 font-semibold">${l.villaNo}</p><p class="text-[10px] text-slate-400">${l.room}</p></td>
@@ -1100,12 +1258,21 @@
         }
 
         async function updateLogStatus(logId, status) {
-            await postActionToSheet({ action: 'UPDATE_STATUS', logId: logId, status: status }, `Status "${status}"...`);
-            showToast(`রিকোয়েস্ট ${status} করা হয়েছে!`);
+            if (!appState.managerLoggedIn) {
+                showToast('আগে Manager পাসওয়ার্ড দিয়ে Unlock করুন!', 'error');
+                return;
+            }
+            await postActionToSheet({
+                action: 'UPDATE_STATUS',
+                logId: logId,
+                status: status,
+                expireToken: true
+            }, `Status "${status}"...`);
+            showToast(`রিকোয়েস্ট ${status} করা হয়েছে ও লিংক মেয়াদ শেষ করা হয়েছে!`);
         }
 
         window.onload = function() {
-            if (SCRIPT_URL) fetchAllDataFromSheet();
+            initGoogleSignIn();
         };
     </script>
 </body>
