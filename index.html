@@ -298,7 +298,7 @@
                         <i class="fa-solid fa-lock"></i>
                     </div>
                     <h3 class="text-xl font-bold text-white mb-1">Manager Console</h3>
-                    <p class="text-xs text-slate-400 mb-6">PIN দিন (Default PIN: 1234)</p>
+                    <p class="text-xs text-slate-400 mb-6">PIN দিন </p>
                     <form onsubmit="handleManagerLogin(event)" class="space-y-4">
                         <input type="password" id="managerPinInput" placeholder="••••" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-center tracking-widest text-lg text-white focus:outline-none focus:border-emerald-500">
                         <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold rounded-xl transition">Unlock Manager</button>
@@ -579,7 +579,7 @@
                 // Smart Restock / New Item mode
                 switchTab('manager');
                 if (!appState.managerLoggedIn) {
-                    showToast('আগে Manager PIN (1234) দিয়ে Unlock করুন!', 'error');
+                    showToast('আগে Manager PIN  দিয়ে Unlock করুন!', 'error');
                 }
                 document.getElementById('smartIdInput').value = scannedId;
                 onSmartIdChanged(scannedId);
@@ -1057,14 +1057,14 @@
 
         function handleManagerLogin(e) {
             e.preventDefault();
-            if (document.getElementById('managerPinInput').value === '1234') {
+            if (document.getElementById('managerPinInput').value === '66002898s') {
                 appState.managerLoggedIn = true;
                 document.getElementById('managerLoginGate').classList.add('hidden');
                 document.getElementById('managerDashboardContent').classList.remove('hidden');
                 renderManagerQueue();
                 showToast('Manager Mode Unlocked');
             } else {
-                showToast('ভুল PIN! সঠিক PIN: 1234', 'error');
+                showToast('ভুল PIN!', 'error');
             }
         }
 
