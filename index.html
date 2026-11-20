@@ -69,7 +69,7 @@
         <div class="flex items-center space-x-2">
             <div id="connectionBadge" class="px-3 py-1.5 bg-emerald-500/15 text-emerald-400 text-xs font-semibold rounded-full border border-emerald-500/30 flex items-center gap-1.5 transition">
                 <span id="statusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="statusText">Sheet Connected</span>
+                <span id="statusText">Connected</span>
             </div>
             <button onclick="signOutGoogleUser()" title="Sign Out" class="px-2.5 py-1.5 bg-slate-700 hover:bg-rose-600 text-white rounded-full text-xs transition">
                 <i class="fa-solid fa-right-from-bracket"></i>
@@ -282,7 +282,7 @@
                         </div>
 
                         <button type="submit" id="soSubmitBtn" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-paper-plane"></i> Submit Stock Out to Sheet
+                            <i class="fa-solid fa-paper-plane"></i> Submit Stock Out
                         </button>
                     </form>
                 </div>
@@ -476,7 +476,7 @@
     <div id="setupModal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative space-y-4">
             <button onclick="document.getElementById('setupModal').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-link text-emerald-400"></i> Google Sheet Live Connection</h3>
+            <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-link text-emerald-400"></i> Live Connection</h3>
             <p class="text-xs text-slate-300 leading-relaxed">আপনার Google Sheet-এ Apps Script Deploy করার পর প্রাপ্ত Web App URL-টি এখানে দিন:</p>
             <input type="text" id="modalUrlInput" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-slate-950 border border-slate-600 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-400">
             <button onclick="saveAndConnectUrl('modalUrlInput')" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold rounded-xl text-sm transition">Save & Load Sheet Data</button>
@@ -669,7 +669,7 @@
             setTimeout(() => t.classList.add('translate-y-24', 'opacity-0'), 3200);
         }
 
-        function setLoading(show, text = 'Google Sheet থেকে লাইভ ডেটা লোড হচ্ছে...') {
+        function setLoading(show, text = 'লাইভ ডেটা লোড হচ্ছে...') {
             const bar = document.getElementById('loadingBar');
             document.getElementById('loadingText').textContent = text;
             if (show) bar.classList.remove('hidden');
@@ -838,7 +838,7 @@
                     category: finalCat,
                     totalStock: qty,
                     photo: photo
-                }, 'নতুন প্রোডাক্ট Google Sheet-এ যুক্ত হচ্ছে...');
+                }, 'নতুন প্রোডাক্ট যুক্ত হচ্ছে...');
 
                 if (ok) {
                     resetSmartForm();
@@ -915,7 +915,7 @@
 
         async function fetchAllDataFromSheet() {
             if (!SCRIPT_URL) return;
-            setLoading(true, 'Google Sheet থেকে লাইভ ডেটা লোড হচ্ছে...');
+            setLoading(true, 'লাইভ ডেটা লোড হচ্ছে...');
             try {
                 const res = await fetch(SCRIPT_URL + '?action=getAll&t=' + Date.now());
                 const data = await res.json();
@@ -926,17 +926,17 @@
                     appState.staffList = data.staffList || ['SHORIF', 'ARIF', 'IBRAHIM', 'MOHIN'];
                     appState.villaList = data.villaList || ['Villa 08', 'Villa 26', 'Villa 47', 'Villa 68', 'Ezdan 24'];
                     refreshAllViews();
-                    showToast('Google Sheet থেকে লাইভ ডেটা আপডেট হয়েছে!');
+                    showToast('লাইভ ডেটা আপডেট হয়েছে!');
                 }
             } catch (err) {
                 console.error(err);
-                showToast('Sheet কানেক্ট করা যায়নি!', 'error');
+                showToast('কানেক্ট করা যায়নি!', 'error');
             } finally {
                 setLoading(false);
             }
         }
 
-        async function postActionToSheet(payload, loadingMsg = 'Google Sheet-এ সেভ হচ্ছে...') {
+        async function postActionToSheet(payload, loadingMsg = 'সেভ হচ্ছে...') {
             if (!SCRIPT_URL) return false;
             payload.userEmail = appState.googleUser ? appState.googleUser.email : 'unknown';
             payload.userName = appState.googleUser ? appState.googleUser.name : '';
